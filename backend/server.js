@@ -1,57 +1,58 @@
-const cors = require('cors');
-const express = require('express');
-const axios = require('axios');
-require('dotenv').config();
-const { GoogleGenerativeAI } = require('@google/generative-ai');
+const cors = require("cors");
+const express = require("express");
+const axios = require("axios");
+require("dotenv").config();
+const { GoogleGenerativeAI } = require("@google/generative-ai");
 
 const app = express();
 const port = process.env.PORT || 3000;
 
-app.use(cors());
+//setting up cors for frontend
+app.use(cors(["https://scaler-assignment-3.vercel.app"]));
 app.use(express.json());
 
 // Initialize Google Generative AI
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
-// Helper function to extract LeetCode problem details from a URL
+// function to extract leetcode problems name
 const extractProblemInfo = async (leetcodeUrl) => {
   if (!leetcodeUrl) return null;
-  
+
   try {
-    // Extract problem slug from URL
+    // Extract problems from URL
     const urlObj = new URL(leetcodeUrl);
-    if (!urlObj.hostname.includes('leetcode.com')) return null;
-    
-    const pathParts = urlObj.pathname.split('/').filter(Boolean);
-    if (pathParts.length >= 2 && pathParts[0] === 'problems') {
+    if (!urlObj.hostname.includes("leetcode.com")) return null;
+
+    const pathParts = urlObj.pathname.split("/").filter(Boolean);
+    if (pathParts.length >= 2 && pathParts[0] === "problems") {
       const problemSlug = pathParts[1];
-      
-      // For a more complete solution, you could use the LeetCode API to fetch more details
-      // but that would require authentication. For now, we'll return just the basic info
+
       return {
         slug: problemSlug,
-        title: problemSlug.split('-').map(word => 
-          word.charAt(0).toUpperCase() + word.slice(1)
-        ).join(' '),
-        url: leetcodeUrl
+        title: problemSlug
+          .split("-")
+          .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+          .join(" "),
+        url: leetcodeUrl,
       };
     }
     return null;
   } catch (error) {
-    console.error('Error extracting problem info:', error);
+    console.error("Error extracting problem info:", error);
     return null;
   }
 };
 
-// Function to generate a prompt for the AI based on the LeetCode problem and user query
+// Function to generate a prompt for solution of user Query
 const generatePrompt = async (userMessage, leetcodeUrl) => {
   let prompt = userMessage;
-  
-  // If a LeetCode URL is provided, enhance the prompt with problem context
+
+  // If a LeetCode URL is provided, enhancing the prompt with problem context for better solutions
   if (leetcodeUrl) {
     const problemInfo = await extractProblemInfo(leetcodeUrl);
     if (problemInfo) {
+      //setting up prompt
       prompt = `
 I'm working on this LeetCode problem: ${problemInfo.title} (${leetcodeUrl}).
 
@@ -66,18 +67,18 @@ Please respond in the following format:
       `;
     }
   }
-  
+
   return prompt;
 };
 
-// Chat endpoint for handling LeetCode-specific questions
-app.post('/api/chat', async (req, res) => {
+// Chat api for handling LeetCode questions
+app.post("/api/chat", async (req, res) => {
   const { userMessage, leetcodeUrl, context } = req.body;
 
   try {
     // Generate a context-aware prompt for the AI
     const enhancedPrompt = await generatePrompt(userMessage, leetcodeUrl);
-    
+
     // System instructions to guide the AI response
     const systemInstructions = `
 You are LeetCodeBot, a specialized assistant for helping programmers solve LeetCode problems.
@@ -92,18 +93,22 @@ Follow these instructions carefully:
 7. If the user is struggling, offer hints before giving the full solution
 8. When relevant, explain common patterns (two pointers, sliding window, etc.)
     `;
-    
+
     // Generate a response from the Gemini API with the model chat interface
     const chat = model.startChat({
       history: [
         {
-          role: 'user',
+          role: "user",
           parts: [{ text: systemInstructions }],
         },
         {
-          role: 'model',
-          parts: [{ text: "I understand my role as LeetCodeBot. I'll provide detailed algorithmic explanations, proper code solutions, complexity analysis, and follow all the guidelines you've outlined." }],
-        }
+          role: "model",
+          parts: [
+            {
+              text: "I understand my role as LeetCodeBot. I'll provide detailed algorithmic explanations, proper code solutions, complexity analysis, and follow all the guidelines you've outlined.",
+            },
+          ],
+        },
       ],
     });
 
@@ -113,31 +118,31 @@ Follow these instructions carefully:
     // Process the response to enhance code formatting and structure
     const processedResponse = aiResponse
       // Ensure proper code block formatting
-      .replace(/```(\w+)\s*\n/g, '```$1\n')
+      .replace(/```(\w+)\s*\n/g, "```$1\n")
       // Clean up any potential formatting issues
-      .replace(/\\n/g, '\n');
-    
+      .replace(/\\n/g, "\n");
+
     // Send the response back to the frontend
     res.json({
       response: processedResponse,
       aiResponse: aiResponse, // Include raw response for debugging
     });
-    
   } catch (error) {
-    console.error('Error communicating with Gemini API:', error.message);
-    res.status(500).json({ 
-      error: 'An error occurred while processing your request.',
-      details: error.message
+    console.error("Error communicating with Gemini API:", error.message);
+    res.status(500).json({
+      error: "An error occurred while processing your request.",
+      details: error.message,
     });
   }
 });
 
-// Default endpoint
-app.get('/', (req, res) => {
-  res.send('LeetCode Assistant Backend is running.');
+
+app.get("/", (req, res) => {
+  res.send("LeetCode Assistant Backend is running.");
 });
 
-// Start the server
+
+//start server on port env or 3000
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
 });

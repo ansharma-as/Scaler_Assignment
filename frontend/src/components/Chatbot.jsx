@@ -8,7 +8,7 @@ import { atomDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
 const API_URL = import.meta.env.VITE_API_URL;
 
-// Difficulty badges with LeetCode's color scheme
+// setting up difficulty badges with LeetCode theme color
 const DifficultyBadge = ({ level }) => {
   const colors = {
     easy: { bg: 'bg-green-600', text: 'text-green-100' },
@@ -126,11 +126,11 @@ const ChatComponent = () => {
   const [leetcodeUrl, setLeetcodeUrl] = useState('');
   const [showLeetcodeInput, setShowLeetcodeInput] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
-  const [theme, setTheme] = useState('dark'); // 'dark' or 'leetcode'
+  const [theme, setTheme] = useState('dark'); // making two theme dark or leetcode theme
   const messagesEndRef = useRef(null);
   const textareaRef = useRef(null);
 
-  // Auto-scroll to bottom when messages change
+  // Auto-scroll to bottom if message length is big
   useEffect(() => {
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
@@ -176,14 +176,14 @@ const ChatComponent = () => {
     setLoading(true);
     
     try {
-      // Updated API call to match our new backend
+      // making a post request to our backend with usermessage and leetcodeurl in body
       const response = await axios.post(`${API_URL}/api/chat`, {
         userMessage: messageToSend,
         leetcodeUrl: detectedUrl || leetcodeUrl,
-        context: 'leetcode' // Add context to inform the backend this is a LeetCode query
+        context: 'leetcode' // Adding context for our backend
       });
 
-      // Update how we access the response data to match our new backend structure
+      // taking back the response from backend
       const processedResponse = response.data.response;
 
       const botResponse = {
@@ -193,7 +193,7 @@ const ChatComponent = () => {
         timestamp: new Date().toISOString()
       };
 
-      setChatHistory((prevHistory) => [...prevHistory, botResponse]);
+      setChatHistory((prevHistory) => [...prevHistory, botResponse]); //saving history 
     } catch (error) {
       console.error('Error sending message:', error);
       setChatHistory((prevHistory) => [
@@ -214,6 +214,8 @@ const ChatComponent = () => {
     }
   };
 
+
+  // function to submit leetcode url
   const handleLeetCodeSubmit = () => {
     if (leetcodeUrl) {
       const contextMessage = `I'm working on this LeetCode problem: ${leetcodeUrl}. `;
@@ -233,10 +235,10 @@ const ChatComponent = () => {
   const renderMessage = (message) => {
     if (!message.text) return null;
     
-    // Check if the message contains a LeetCode URL
+    // Checking LeetCode URL in usermessgae
     const urlMatch = detectLeetCodeUrl(message.text);
     
-    // For regular messages, use ReactMarkdown
+    // showing up the response in marksdown markson for better ui
     return (
       <div>
         {urlMatch && <ProblemLink url={urlMatch} />}
@@ -273,7 +275,7 @@ const ChatComponent = () => {
     );
   };
 
-  // Quick action categories for the sidebar
+  // Quick actions sidebar
   const quickActionCategories = [
     {
       title: "Algorithm Help",
@@ -325,7 +327,7 @@ const ChatComponent = () => {
     }
   ];
 
-  // LeetCode-inspired theme colors
+  // LeetCode-inspired theme and the dark theme for attractivess of UI
   const themeColors = {
     dark: {
       bg: "bg-gray-900",
