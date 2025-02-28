@@ -1,6 +1,8 @@
 # LeetCode Assistant
 
-![LeetCode Assistant](https://raw.githubusercontent.com/username/leetcode-assistant/main/public/banner.png)
+<img width="1463" alt="Screenshot 2025-03-01 at 3 01 28 AM" src="https://github.com/user-attachments/assets/f4f74a6d-af00-4d81-a7a7-321d266de7a3" /><img width="1456" alt="Screenshot 2025-03-01 at 3 01 37 AM" src="https://github.com/user-attachments/assets/a2003f74-96d3-4116-8859-85a12e6f6930" />
+
+
 
 A React-based AI chat application designed specifically to help developers understand and solve LeetCode problems. Get algorithm explanations, code solutions, and optimization tips by simply sharing a LeetCode problem URL.
 
@@ -17,18 +19,13 @@ A React-based AI chat application designed specifically to help developers under
 
 ## 📋 Table of Contents
 
-- [Demo](#demo)
 - [Installation](#installation)
 - [Usage](#usage)
-- [Architecture](#architecture)
 - [AI Integration](#ai-integration)
 - [Configuration](#configuration)
 - [Contributing](#contributing)
 - [License](#license)
 
-## 🎮 Demo
-
-[View live demo](#) | [Watch demo video](#)
 
 ## 🔧 Installation
 
@@ -51,7 +48,7 @@ A React-based AI chat application designed specifically to help developers under
 
 3. Create a `.env` file in the root directory with the following variables:
    ```
-   VITE_API_URL=http://localhost:8000
+   VITE_API_URL=http://localhost:3000
    ```
 
 4. Start the development server:
