@@ -8,7 +8,12 @@ const app = express();
 const port = process.env.PORT || 3000;
 
 //setting up cors for frontend
-app.use(cors(["https://scaler-assignment-3.vercel.app"]));
+app.use(cors({
+  origin: "https://scaler-assignment-3.vercel.app", 
+  methods: ["GET", "POST", "PUT", "DELETE"], 
+  credentials: true 
+}));
+
 app.use(express.json());
 
 // Initialize Google Generative AI
