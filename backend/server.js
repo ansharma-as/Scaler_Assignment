@@ -9,7 +9,7 @@ const port = process.env.PORT || 3000;
 
 //setting up cors for frontend
 app.use(cors({
-  origin: "https://scaler-assignment-3.vercel.app", 
+  origin: "https://scaler-assignment-three.vercel.app/", 
   methods: ["GET", "POST", "PUT", "DELETE"], 
   credentials: true 
 }));
