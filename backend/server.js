@@ -9,7 +9,7 @@ const port = process.env.PORT || 3000;
 
 //setting up cors for frontend
 app.use(cors({
-  origin: ["https://scaler-assignment-three.vercel.app/" , "https://scaler-assignment-three.vercel.app/" , "https://scaler-assignment-git-main-strontiums-projects.vercel.app/"], 
+  origin: ["https://scaler-assignment-three.vercel.app/" , "https://scaler-assignment-three.vercel.app/api/chat" , "https://scaler-assignment-git-main-strontiums-projects.vercel.app/"], 
   methods: ["GET", "POST", "PUT", "DELETE"], 
   credentials: true 
 }));
